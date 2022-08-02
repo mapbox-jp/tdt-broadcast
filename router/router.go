@@ -66,7 +66,7 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 	// 	c.HTML(200, "observer.html", nil)
 	// })
 
-	r.POST("/channel", func(c *gin.Context) {
+	r.POST("/channels", func(c *gin.Context) {
 		endpoint, err := media.CreateChannel()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -79,13 +79,26 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 		}
 	})
 
-	// r.GET("/channel", func(c *gin.Context) {
-	// 	channelId, url, _ := media.GetChannel()
-	// 	c.JSON(http.StatusOK, gin.H{
-	// 		"id":  channelId,
-	// 		"url": url,
-	// 	})
-	// })
+	r.PUT("/channels/:id", func(c *gin.Context) {
+		channelId := c.Param("id")
+		type ChannelBody struct {
+			IsUsed bool   `json:"is_used"`
+			UserId string `json:"user_id"`
+		}
+		var body ChannelBody
+		if err := c.ShouldBindJSON(&body); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		if !body.IsUsed {
+			media.StopChannel(channelId)
+		} else {
+			media.StartChannel(body.UserId, channelId)
+		}
+		c.JSON(http.StatusOK, gin.H{})
+	})
 
 	r.GET("/ws/observe/riders", func(c *gin.Context) {
 		upgrader := websocket.Upgrader{
