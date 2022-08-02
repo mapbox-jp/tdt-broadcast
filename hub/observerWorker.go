@@ -21,7 +21,7 @@ var (
 )
 
 type Observer struct {
-	Uuid string
+	UuId string
 	Send chan []byte
 	Hub  *Hub
 	Conn *websocket.Conn
@@ -95,7 +95,7 @@ func (o *Observer) WritePump() {
 
 func ObserverWorker(hub *Hub, conn *websocket.Conn, c *gin.Context) {
 	observer := &Observer{
-		Uuid: "",
+		UuId: "",
 		Send: make(chan []byte),
 		Hub:  hub,
 		Conn: conn,

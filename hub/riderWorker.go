@@ -141,7 +141,7 @@ func (r *Rider) ReadPump() {
 
 func RiderWorker(userId string, hub *Hub, conn *websocket.Conn, c *gin.Context) {
 	rider := &Rider{
-		Uuid:   c.ClientIP(),
+		UuId:   c.ClientIP(),
 		UserId: userId,
 		Send:   make(chan []byte),
 		Hub:    hub,
