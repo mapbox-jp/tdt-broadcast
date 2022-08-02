@@ -55,7 +55,7 @@ func (r *Rider) WritePump() {
 	for {
 		select {
 		case text, ok := <-r.Send:
-			logger.Info("start sending text: %v", text)
+			logger.Info("start sending text: %v", string(text))
 			r.Conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				r.Conn.WriteMessage(websocket.CloseMessage, []byte{})
@@ -77,7 +77,7 @@ func (r *Rider) WritePump() {
 			if err := w.Close(); err != nil {
 				return
 			}
-			logger.Info("succeeded sending text: %v", text)
+			logger.Info("succeeded sending text: %v", string(text))
 		case <-ticker.C:
 			r.Conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := r.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
@@ -132,6 +132,7 @@ func (r *Rider) ReadPump() {
 				logger.Error("Failed to marshal broadcasts: %v", err)
 				return
 			}
+			logger.Info("sending start broadcast, url: %v", url)
 			r.Send <- jsonBytes
 		case "PING":
 			logger.Debug("Getting ping. userId: %v", r.UserId)
