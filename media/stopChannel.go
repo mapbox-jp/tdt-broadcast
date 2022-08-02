@@ -10,11 +10,14 @@ func (m *Media) StopChannel(channelId string) error {
 		return err
 	}
 	ml := medialive.New(m.Sess)
-	ml.StopChannel(&medialive.StopChannelInput{
+	_, err = ml.StopChannel(&medialive.StopChannelInput{
 		ChannelId: &channelId,
 	})
-	ml.WaitUntilChannelStopped(&medialive.DescribeChannelInput{
+	if err != nil {
+		return err
+	}
+	err = ml.WaitUntilChannelStopped(&medialive.DescribeChannelInput{
 		ChannelId: &channelId,
 	})
-	return nil
+	return err
 }

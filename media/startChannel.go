@@ -10,11 +10,17 @@ func (m *Media) StartChannel(userId string, channelId string) error {
 		return err
 	}
 	ml := medialive.New(m.Sess)
-	ml.StartChannel(&medialive.StartChannelInput{
+	_, err = ml.StartChannel(&medialive.StartChannelInput{
 		ChannelId: &channelId,
 	})
-	ml.WaitUntilChannelRunning(&medialive.DescribeChannelInput{
+	if err != nil {
+		return err
+	}
+	err = ml.WaitUntilChannelRunning(&medialive.DescribeChannelInput{
 		ChannelId: &channelId,
 	})
+	if err != nil {
+		return err
+	}
 	return nil
 }

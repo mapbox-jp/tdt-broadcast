@@ -80,24 +80,31 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 	})
 
 	r.PUT("/channels/:id", func(c *gin.Context) {
+		var err error
 		channelId := c.Param("id")
 		type ChannelBody struct {
 			IsUsed bool   `json:"is_used"`
 			UserId string `json:"user_id"`
 		}
 		var body ChannelBody
-		if err := c.ShouldBindJSON(&body); err != nil {
+		if err = c.ShouldBindJSON(&body); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
 		if !body.IsUsed {
-			media.StopChannel(channelId)
+			err = media.StopChannel(channelId)
 		} else {
-			media.StartChannel(body.UserId, channelId)
+			err = media.StartChannel(body.UserId, channelId)
 		}
-		c.JSON(http.StatusOK, gin.H{})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"err": err,
+			})
+		} else {
+			c.JSON(http.StatusOK, gin.H{})
+		}
 	})
 
 	r.GET("/ws/observe/riders", func(c *gin.Context) {
