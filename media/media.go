@@ -19,8 +19,8 @@ type MediaRepository interface {
 	GetChannel() (string, string, string, error)
 	describeContainer(containerName string) (*mediastore.DescribeContainerOutput, error)
 	describeChannel(channelId string) (*medialive.DescribeChannelOutput, error)
-	StartChannel(userId string, channelId string) error
-	StopChannel(channelId string) error
+	StartChannel(userId string, mediaKey string, channelId string) error
+	StopChannel(mediaKey string, channelId string) error
 }
 
 func NewMediaLive(sess *session.Session, rd *redis.Client) (MediaRepository, error) {

@@ -78,7 +78,7 @@ func (h *Hub) Run() {
 					Type:      "LEFT",
 					Timestamp: time.Now(),
 				})
-				rider.Hub.Media.StopChannel(rider.ChannelId)
+				rider.Hub.Media.StopChannel(rider.MediaKey, rider.ChannelId)
 				delete(h.Riders, rider)
 				close(rider.Send)
 				logger.Info("Closed connection with rider: %v", rider)

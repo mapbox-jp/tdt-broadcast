@@ -5,9 +5,9 @@ import (
 	"gps_logger/logger"
 )
 
-func (m *Media) SetChannelOnRedis(channelId string, channelKey string, url string) error {
+func (m *Media) SetChannelOnRedis(mediaKey string, channelId string, url string) error {
 	channel := &Channel{
-		Id:     channelKey,
+		Id:     channelId,
 		Url:    url,
 		IsUsed: false,
 		UserId: "",
@@ -17,7 +17,7 @@ func (m *Media) SetChannelOnRedis(channelId string, channelKey string, url strin
 		logger.Error("Failed to set channels on redis. err: %v", err)
 		return err
 	}
-	m.Rd.HSet("channels", channelId, serialized)
+	m.Rd.HSet("channels", mediaKey, serialized)
 	return nil
 }
 
@@ -30,11 +30,11 @@ func (m *Media) GetChannelsFromRedis() (map[string]string, error) {
 	return channels, nil
 }
 
-func (m *Media) GetChannelFromRedis(channelId string) (*Channel, error) {
+func (m *Media) GetChannelFromRedis(mediaKey string) (*Channel, error) {
 	channel := &Channel{}
-	value, err := m.Rd.HGet("channels", channelId).Result()
+	value, err := m.Rd.HGet("channels", mediaKey).Result()
 	if err != nil {
-		logger.Error("Failed to get channel from redis. channel_id: %v, err: %v", channelId, err)
+		logger.Error("Failed getting the channel from redis. media_key: %v, err: %v", mediaKey, err)
 		return channel, err
 	}
 	if err := json.Unmarshal([]byte(value), &channel); err != nil {
@@ -44,8 +44,8 @@ func (m *Media) GetChannelFromRedis(channelId string) (*Channel, error) {
 	return channel, nil
 }
 
-func (m *Media) UpdateStartedChannelOnRedis(channelId string, userId string) error {
-	channel, err := m.GetChannelFromRedis(channelId)
+func (m *Media) UpdateStartedChannelOnRedis(mediaKey string, userId string) error {
+	channel, err := m.GetChannelFromRedis(mediaKey)
 	if err != nil {
 		return err
 	}
@@ -53,15 +53,15 @@ func (m *Media) UpdateStartedChannelOnRedis(channelId string, userId string) err
 	channel.UserId = userId
 	serialized, err := json.Marshal(channel)
 	if err != nil {
-		logger.Error("Failed to set channels on redis. err: %v", err)
+		logger.Error("Failed updating the channel on redis. err: %v", err)
 		return err
 	}
-	m.Rd.HSet("channels", channelId, serialized)
+	m.Rd.HSet("channels", mediaKey, serialized)
 	return nil
 }
 
-func (m *Media) UpdateStoppedChannelOnRedis(channelId string) error {
-	channel, err := m.GetChannelFromRedis(channelId)
+func (m *Media) UpdateStoppedChannelOnRedis(mediaKey string) error {
+	channel, err := m.GetChannelFromRedis(mediaKey)
 	if err != nil {
 		return err
 	}
@@ -69,9 +69,9 @@ func (m *Media) UpdateStoppedChannelOnRedis(channelId string) error {
 	channel.UserId = ""
 	serialized, err := json.Marshal(channel)
 	if err != nil {
-		logger.Error("Failed to set channels on redis. err: %v", err)
+		logger.Error("Failed updating the channel on redis. err: %v", err)
 		return err
 	}
-	m.Rd.HSet("channels", channelId, serialized)
+	m.Rd.HSet("channels", mediaKey, serialized)
 	return nil
 }

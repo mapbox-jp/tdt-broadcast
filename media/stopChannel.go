@@ -4,8 +4,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/medialive"
 )
 
-func (m *Media) StopChannel(channelId string) error {
-	err := m.UpdateStoppedChannelOnRedis(channelId)
+func (m *Media) StopChannel(mediaKey string, channelId string) error {
+	err := m.UpdateStoppedChannelOnRedis(mediaKey)
 	if err != nil {
 		return err
 	}

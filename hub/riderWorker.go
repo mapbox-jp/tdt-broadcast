@@ -18,6 +18,7 @@ var (
 type Rider struct {
 	UuId      string          `json:"-"`
 	UserId    string          `json:"-"`
+	MediaKey  string          `json:"-"`
 	ChannelId string          `json:"-"`
 	Send      chan []byte     `json:"-"`
 	Hub       *Hub            `json:"-"`
@@ -109,11 +110,12 @@ func (r *Rider) ReadPump() {
 
 		switch req.Type {
 		case "START_BROADCAST":
-			channelId, _, url, err := r.Hub.Media.GetChannel()
+			mediaKey, channelId, url, err := r.Hub.Media.GetChannel()
 			if err != nil {
 				logger.Error("Failed to set channels on redis. err: %v", err)
 			} else {
-				r.Hub.Media.StartChannel(r.UuId, channelId)
+				r.Hub.Media.StartChannel(r.UuId, mediaKey, channelId)
+				r.MediaKey = mediaKey
 				r.ChannelId = channelId
 			}
 			jsonBytes, err := json.Marshal(&Response{
