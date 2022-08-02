@@ -79,9 +79,10 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 		}
 	})
 
-	r.PUT("/channels/:id", func(c *gin.Context) {
+	r.PUT("/channels/:mediaKey/:channelId", func(c *gin.Context) {
 		var err error
-		channelId := c.Param("id")
+		mediaKey := c.Param("mediaKey")
+		channelId := c.Param("channelId")
 		type ChannelBody struct {
 			IsUsed bool   `json:"is_used"`
 			UserId string `json:"user_id"`
@@ -94,9 +95,9 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 			return
 		}
 		if !body.IsUsed {
-			err = media.StopChannel(channelId)
+			err = media.StopChannel(mediaKey, channelId)
 		} else {
-			err = media.StartChannel(body.UserId, channelId)
+			err = media.StartChannel(body.UserId, mediaKey, channelId)
 		}
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
