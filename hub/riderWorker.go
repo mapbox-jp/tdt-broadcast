@@ -109,7 +109,7 @@ func (r *Rider) ReadPump() {
 
 		switch req.Type {
 		case "START_BROADCAST":
-			channelId, channelKey, url, err := r.Hub.Media.GetChannel()
+			channelId, _, url, err := r.Hub.Media.GetChannel()
 			if err != nil {
 				logger.Error("Failed to set channels on redis. err: %v", err)
 			} else {
