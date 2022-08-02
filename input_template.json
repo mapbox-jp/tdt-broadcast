@@ -1,0 +1,15 @@
+{
+  "name": "Template",
+  "type": "RTMP_PUSH",
+  "inputSecurityGroups": [
+    "5021052"
+  ],
+  "destinations": [
+    {
+      "streamName": "LiveA/A"
+    },
+    {
+      "streamName": "LiveB/B"
+    }
+  ]
+}

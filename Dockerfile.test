@@ -1,0 +1,46 @@
+# FROM --platform=linux/amd64 golang:1.7.3 AS builder
+# WORKDIR /go/src/github.com/alexellis/href-counter/
+# RUN go get -d -v golang.org/x/net/html
+# COPY . .
+# RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
+ 
+# FROM --platform=linux/amd64 alpine:latest
+# RUN apk --no-cache add ca-certificates
+# WORKDIR /root/
+# COPY --from=builder /go/src/github.com/alexellis/href-counter/app .
+# CMD ["./app"]
+
+# FROM golang:alpine as builder
+FROM golang:1.17.12-alpine3.16 as builder
+
+WORKDIR /app
+
+ADD . .
+
+RUN apk add build-base
+RUN go mod download
+RUN mkdir -p /tmp/log/app
+RUN mkdir -p /tmp/app
+
+ENTRYPOINT go build -o ./test ./main.go
+
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+WORKDIR /app
+COPY --from=builder /app/test .
+CMD ["./test"]
+
+
+# FROM golang:alpine as builder
+# RUN mkdir /build
+# ADD *.go /build/
+# WORKDIR /build
+# RUN CGO_ENABLED=0 GOOS=linux go build -a -o test ./main.go
+
+
+# FROM alpine:3.11.3
+# COPY --from=builder /build/test .
+
+# ENTRYPOINT [ "./test" ]
+# CMD [ "3", "300" ]

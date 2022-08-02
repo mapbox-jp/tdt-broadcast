@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <p>WebSocket Sample</p>
+    <input id="eventType">
+    <input id="dispMsg">
+  </body>
+</html>
+<script type="text/javascript">
+  var connection = new WebSocket("ws://ws/observers");
+  window.connection = connection;
+  connection.onopen = function(event) {
+    console.log(event);
+    document.getElementById("eventType").value = "通信接続イベント受信";
+    document.getElementById("dispMsg").value = event.data;
+  };
+  connection.onerror = function(error) {
+    console.log(error);
+    document.getElementById("eventType").value = "エラー発生イベント受信";
+    document.getElementById("dispMsg").value = error.data;
+  };
+  connection.onmessage = function(event) {
+    console.log(event);
+    console.log(JSON.parse(event.data));
+    document.getElementById("eventType").value = "メッセージ受信";
+    document.getElementById("dispMsg").value = event.data;
+  };
+  connection.onclose = function() {
+    document.getElementById("eventType").value = "通信切断イベント受信";
+    document.getElementById("dispMsg").value = "";
+  };
+</script>

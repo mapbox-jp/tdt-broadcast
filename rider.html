@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <video id="video"></video>
+    <p>WebSocket Sample</p>
+    <input id="eventType">
+    <input id="dispMsg">
+    <button id="send">送信</button>
+  </body>
+</html>
+<script type="text/javascript">
+  const video = document.getElementById("video")
+  // navigator.mediaDevices.getUserMedia({
+  //   video: true,
+  //   audio: false,
+  // }).then(stream => {
+  //   video.srcObject = stream;
+  //   video.play()
+  // }).catch(err => {  
+  //   console.error(err);
+  // })
+
+  // fetch("http://127.0.0.1:8080/live").then(res => {
+  //   console.log(res);
+  // }).catch(err => {
+  //   console.log(err);
+  // });
+  connection = new WebSocket("wss://d2nj8bthw81dzk.cloudfront.net/ws/riders");
+  connection.onopen = function (event) {
+    navigator.geolocation.watchPosition((position) => {
+      const latitude  = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      const accuracy  = position.coords.accuracy;
+      coordinates = { latitude, longitude, accuracy };
+      sendCoordinates(coordinates);
+    }, (error) => {
+      console.error(error);
+    }, { enableHighAccuracy: true });
+  };
+  connection.onerror = function (error) {
+    console.log(error);
+    document.getElementById("eventType").value = "エラー発生イベント受信";
+    document.getElementById("dispMsg").value = error.data;
+  };
+  connection.onmessage = function (event) {
+    console.log(event);
+    document.getElementById("eventType").value = "メッセージ受信";
+    document.getElementById("dispMsg").value = event.data;
+  };
+  connection.onclose = function () {
+    document.getElementById("eventType").value = "通信切断イベント受信";
+    document.getElementById("dispMsg").value = "";
+  };
+  sendCoordinates = function (coordinates) {
+    const data = {
+      ...coordinates,
+      timestamp: Math.floor(new Date().getTime() / 1000)
+    };
+    console.log("sending data: ", data);
+    connection.send(JSON.stringify(data));
+  };
+  const sendButton = document.getElementById("send");
+  sendButton.onclick = () => {
+    sendCoordinates(coordinates);
+  };
+</script>

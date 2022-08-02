@@ -1,0 +1,32 @@
+FROM --platform=linux/amd64 ubuntu:18.04 as app
+
+ENV LANG en_US.utf8
+ENV ENTRYKIT_VERSION 0.4.0
+ENV ROOT /app
+
+RUN apt-get -y update \
+    && apt-get -y upgrade \
+    && apt -y update \
+    && apt -y upgrade
+
+RUN apt-get install -y locales curl vim
+RUN apt-get install -y openssh-server
+RUN apt -y install mysql-server \
+    && apt -y install mysql-client \
+    && apt -y install libmysqlclient-dev
+
+
+VOLUME [ "/app" ]
+
+WORKDIR $ROOT
+COPY . $ROOT
+
+EXPOSE 80
+EXPOSE 22
+
+RUN echo 'root:root' | chpasswd
+RUN mkdir /run/sshd
+RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+CMD ["/usr/sbin/sshd", "-D"]

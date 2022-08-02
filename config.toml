@@ -1,0 +1,12 @@
+[system]
+port = 20000
+pid_path = "/tmp/adserver.pid"
+max_idle_connection = 64
+max_ad_number = 4
+
+[log]
+log_filepath = "logs"
+log_level = "DEBUG"
+max_size = 500
+max_backup_terms = 10
+max_age = 365
