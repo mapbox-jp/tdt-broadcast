@@ -56,15 +56,15 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 		})
 	})
 
-	// r.GET("/rider", func(c *gin.Context) {
-	// 	r.LoadHTMLFiles("rider.html")
-	// 	c.HTML(200, "rider.html", nil)
-	// })
+	r.GET("/rider", func(c *gin.Context) {
+		r.LoadHTMLFiles("rider.html")
+		c.HTML(200, "rider.html", nil)
+	})
 
-	// r.GET("/observer", func(c *gin.Context) {
-	// 	r.LoadHTMLFiles("observer.html")
-	// 	c.HTML(200, "observer.html", nil)
-	// })
+	r.GET("/observer", func(c *gin.Context) {
+		r.LoadHTMLFiles("observer.html")
+		c.HTML(200, "observer.html", nil)
+	})
 
 	r.POST("/channels", func(c *gin.Context) {
 		endpoint, err := media.CreateChannel()
