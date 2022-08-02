@@ -66,10 +66,19 @@ func (h *Hub) Run() {
 				Locations: Locations{},
 				Timestamp: time.Now(),
 			})
+
 			jsonBytes, _ := json.Marshal(&Response{
 				Type: "JOINED",
 			})
 			rider.Send <- jsonBytes
+
+			jsonBytes, _ = json.Marshal(&Response{
+				Type:  "PING",
+				Url:   "",
+				Error: nil,
+			})
+			rider.Send <- jsonBytes
+
 			logger.Info("Open connection with new rider: %v", rider)
 		case rider := <-h.RiderUnregister:
 			if _, ok := h.Riders[rider]; ok {
@@ -100,9 +109,14 @@ func (h *Hub) Run() {
 			h.Rd.HSet("locations", userId, serialized)
 		case <-ticker.C:
 			for rider := range h.Riders {
-				jsonBytes, _ := json.Marshal(&Response{
-					Type: "JOINED",
+				jsonBytes, err := json.Marshal(&Response{
+					Type:  "PING",
+					Url:   "",
+					Error: nil,
 				})
+				if err != nil {
+					return
+				}
 				logger.Info("ping")
 				rider.Send <- jsonBytes
 			}
