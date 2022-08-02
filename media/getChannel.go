@@ -3,12 +3,11 @@ package media
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"gps_logger/logger"
 )
 
 func (m *Media) GetChannel() (string, string, error) {
-	channels, err := m.GetChannelFromRedis()
+	channels, err := m.GetChannelsFromRedis()
 	if err != nil {
 		logger.Error("Failed to get channels from redis. err: %v", err)
 		return "", "", err
@@ -19,7 +18,6 @@ func (m *Media) GetChannel() (string, string, error) {
 			logger.Error("Failed unmarshal value. err: %v", err)
 			return "", "", err
 		}
-		fmt.Println(channel)
 		if !channel.IsUsed {
 			return channel.Id, channel.Url, nil
 		}

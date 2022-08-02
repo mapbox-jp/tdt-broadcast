@@ -19,7 +19,7 @@ type MediaRepository interface {
 	GetChannel() (string, string, error)
 	describeContainer(containerName string) (*mediastore.DescribeContainerOutput, error)
 	describeChannel(channelId string) (*medialive.DescribeChannelOutput, error)
-	StartChannel(channelId string) error
+	StartChannel(userId string, channelId string) error
 	StopChannel(channelId string) error
 }
 

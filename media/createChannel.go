@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gps_logger/logger"
 	"io/ioutil"
+	"regexp"
 	"time"
 
 	"github.com/aws/aws-sdk-go/service/medialive"
@@ -18,9 +19,8 @@ func (m *Media) CreateChannel() (string, error) {
 	time := time.Now()
 	timeStr := fmt.Sprintf("%d%02d%02d%02d%02d", time.Year(), time.Month(), time.Day(), time.Hour(), time.Minute())
 
-	logger.Info("Started creating channel key: %v, endpoint: %v", timeStr)
-
 	// --------- Create Media Store Container --------- //
+	logger.Info("Started creating a media container. key: %v, endpoint: %v", timeStr)
 	// Create Params
 	containerInput := &mediastore.CreateContainerInput{
 		ContainerName: &timeStr,
@@ -37,8 +37,10 @@ func (m *Media) CreateChannel() (string, error) {
 		logger.Error("Failed creating the store container. key: %v, err: %v", timeStr, err)
 		return "", err
 	}
+	logger.Info("Suceeded creating a media container. key: %v", timeStr)
 
 	// --------- Create Media Live Input --------- //
+	logger.Info("Started creating a media input. key: %v, endpoint: %v", timeStr)
 	// Create Params
 	input_template_raw, err := ioutil.ReadFile("./input_template.json")
 	if err != nil {
@@ -57,8 +59,10 @@ func (m *Media) CreateChannel() (string, error) {
 		logger.Error("Failed creating channel key: %v, err: %v", timeStr, err)
 		return "", err
 	}
+	logger.Info("Suceeded creating a media input. key: %v", timeStr)
 
 	// --------- Create Media Live Channel --------- //
+	logger.Info("Started creating a media channel. key: %v, endpoint: %v", timeStr)
 	// Create Params
 	channel_template_raw, err := ioutil.ReadFile("./channel_template.json")
 	if err != nil {
@@ -69,18 +73,17 @@ func (m *Media) CreateChannel() (string, error) {
 		logger.Error("Failed reading the template json to create a media channel. key: %v, err: %v", timeStr, err)
 		return "", err
 	}
-	// rep := regexp.MustCompile("https://(.*)")
-	// fss := rep.FindStringSubmatch(*describeContainerOutput.Container.Endpoint)
-	// domain := fss[1]
+	rep := regexp.MustCompile("https://(.*)")
+	fss := rep.FindStringSubmatch(*describeContainerOutput.Container.Endpoint)
+	domain := fss[1]
 
-	// var destination_a = "mediastoressl://" + domain + "/LiveA/live"
-	// var destination_b = "mediastoressl://" + domain + "/LiveB/live"
-	// channelInputParams.Name = &timeStr
-	// channelInputParams.InputAttachments[0].InputId = inputOutput.Input.Id
-	// channelInputParams.InputAttachments[0].InputAttachmentName = inputOutput.Input.Name
-	// channelInputParams.Destinations[0].Settings[0].Url = &destination_a
-	// channelInputParams.Destinations[0].Settings[1].Url = &destination_b
-	fmt.Println(describeContainerOutput)
+	var destination_a = "mediastoressl://" + domain + "/LiveA/live"
+	var destination_b = "mediastoressl://" + domain + "/LiveB/live"
+	channelInputParams.Name = &timeStr
+	channelInputParams.InputAttachments[0].InputId = inputOutput.Input.Id
+	channelInputParams.InputAttachments[0].InputAttachmentName = inputOutput.Input.Name
+	channelInputParams.Destinations[0].Settings[0].Url = &destination_a
+	channelInputParams.Destinations[0].Settings[1].Url = &destination_b
 	// Create Channel
 	channelOutput, err := ml.CreateChannel(channelInputParams)
 	if err != nil {
@@ -94,11 +97,10 @@ func (m *Media) CreateChannel() (string, error) {
 		return "", err
 	}
 	url := *inputOutput.Input.Destinations[0].Url
+	logger.Info("Suceeded creating a media channel. key: %v, endpoint: %v", timeStr, url)
 
 	// Store on the redis
-	m.SetChannelOnRedis(*channelOutput.Channel.Id, url, timeStr)
-
-	logger.Info("Suceeded creating channel. key: %v, endpoint: %v", timeStr, url)
+	m.SetChannelOnRedis(timeStr, *channelOutput.Channel.Id, url)
 
 	return url, nil
 }

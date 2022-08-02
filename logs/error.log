@@ -1,0 +1,19 @@
+2022/08/02 14:17:02 [INFO] Started creating channel key: 202208021417, endpoint: %!v(MISSING)
+2022/08/02 14:17:17 [ERROR] Failed creating a media channel. key: 202208021417, err: AccessDeniedException: 
+	status code: 403, request id: 841302a7-3862-4686-a96e-e1581d2c6f9e
+2022/08/02 14:26:37 [INFO] Started creating channel key: 202208021426, endpoint: %!v(MISSING)
+2022/08/02 14:26:51 [ERROR] Failed creating a media channel. key: 202208021426, err: BadRequestException: Non-empty channel name required
+2022/08/02 14:27:22 [INFO] Started creating channel key: 202208021427, endpoint: %!v(MISSING)
+2022/08/02 14:27:44 [INFO] Suceeded creating channel. key: 202208021427, endpoint: rtmp://18.179.179.166:1935/LiveA/A
+2022/08/02 14:29:53 [INFO] Started creating a media container. key: 202208021429, endpoint: %!v(MISSING)
+2022/08/02 14:30:32 [INFO] Suceeded creating a media container. key: 202208021429
+2022/08/02 14:30:32 [INFO] Started creating a media input. key: 202208021429, endpoint: %!v(MISSING)
+2022/08/02 14:30:33 [INFO] Suceeded creating a media input. key: 202208021429
+2022/08/02 14:30:33 [INFO] Started creating a media channel. key: 202208021429, endpoint: %!v(MISSING)
+2022/08/02 14:30:42 [INFO] Suceeded creating a media channel. key: 202208021429, endpoint: rtmp://35.78.36.4:1935/LiveA/A
+2022/08/02 14:31:06 [INFO] Started creating a media container. key: 202208021431, endpoint: %!v(MISSING)
+2022/08/02 14:31:19 [INFO] Suceeded creating a media container. key: 202208021431
+2022/08/02 14:31:19 [INFO] Started creating a media input. key: 202208021431, endpoint: %!v(MISSING)
+2022/08/02 14:31:20 [INFO] Suceeded creating a media input. key: 202208021431
+2022/08/02 14:31:20 [INFO] Started creating a media channel. key: 202208021431, endpoint: %!v(MISSING)
+2022/08/02 14:31:28 [INFO] Suceeded creating a media channel. key: 202208021431, endpoint: rtmp://18.177.6.246:1935/LiveA/A
