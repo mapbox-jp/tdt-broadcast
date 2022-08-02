@@ -113,7 +113,7 @@ func (r *Rider) ReadPump() {
 			if err != nil {
 				logger.Error("Failed to set channels on redis. err: %v", err)
 			} else {
-				r.Hub.Media.StartChannel(r.UserId, channelId)
+				r.Hub.Media.StartChannel(r.UuId, channelId)
 				r.ChannelId = channelId
 			}
 			jsonBytes, err := json.Marshal(&Response{
