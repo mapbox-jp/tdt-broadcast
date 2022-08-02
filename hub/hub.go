@@ -108,18 +108,18 @@ func (h *Hub) Run() {
 			serialized, _ := json.Marshal(location)
 			h.Rd.HSet("locations", userId, serialized)
 		case <-ticker.C:
-			// for rider := range h.Riders {
-			// 	jsonBytes, err := json.Marshal(&Response{
-			// 		Type:  "PING",
-			// 		Url:   "",
-			// 		Error: nil,
-			// 	})
-			// 	if err != nil {
-			// 		return
-			// 	}
-			// 	logger.Info("ping")
-			// 	rider.Send <- jsonBytes
-			// }
+			for rider := range h.Riders {
+				jsonBytes, err := json.Marshal(&Response{
+					Type:  "PING",
+					Url:   "",
+					Error: nil,
+				})
+				if err != nil {
+					return
+				}
+				logger.Info("ping")
+				rider.Send <- jsonBytes
+			}
 
 			if len(h.Broadcasts) > 0 {
 				jsonBytes, err := json.Marshal(h.Broadcasts)
