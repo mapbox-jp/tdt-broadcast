@@ -3,6 +3,7 @@ package hub
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"gps_logger/logger"
 	"gps_logger/model"
 	"time"
@@ -33,8 +34,9 @@ type Request struct {
 	Locations Locations `json:"locations"`
 }
 type Response struct {
-	Type string
-	Url  string
+	Type  string
+	Url   string
+	Error error
 }
 type Locations []Location
 type Location struct {
@@ -53,6 +55,7 @@ func (r *Rider) WritePump() {
 	for {
 		select {
 		case text, ok := <-r.Send:
+			logger.Info("start sending text: %v", text)
 			r.Conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				r.Conn.WriteMessage(websocket.CloseMessage, []byte{})
@@ -74,6 +77,7 @@ func (r *Rider) WritePump() {
 			if err := w.Close(); err != nil {
 				return
 			}
+			logger.Info("succeeded sending text: %v", text)
 		case <-ticker.C:
 			r.Conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := r.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
@@ -114,13 +118,15 @@ func (r *Rider) ReadPump() {
 			if err != nil {
 				logger.Error("Failed to set channels on redis. err: %v", err)
 			} else {
-				r.Hub.Media.StartChannel(r.UuId, mediaKey, channelId)
+				err = r.Hub.Media.StartChannel(r.UuId, mediaKey, channelId)
+				fmt.Println(err)
 				r.MediaKey = mediaKey
 				r.ChannelId = channelId
 			}
 			jsonBytes, err := json.Marshal(&Response{
-				Type: "START_BROADCAST",
-				Url:  url,
+				Type:  "START_BROADCAST",
+				Url:   url,
+				Error: err,
 			})
 			if err != nil {
 				logger.Error("Failed to marshal broadcasts: %v", err)
