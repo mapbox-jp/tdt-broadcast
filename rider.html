@@ -28,7 +28,7 @@
   // }).catch(err => {
   //   console.log(err);
   // });
-  const connection = new WebSocket("wss://d2nj8bthw81dzk.cloudfront.net/ws/riders");
+  const connection = new WebSocket("wss://dev.realtimemap.jp/ws/riders");
   connection.onopen = function (event) {
     navigator.geolocation.watchPosition((position) => {
       const latitude  = position.coords.latitude;

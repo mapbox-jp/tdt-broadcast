@@ -10,7 +10,7 @@
   </body>
 </html>
 <script type="text/javascript">
-  const connection = new WebSocket("wss://d2nj8bthw81dzk.cloudfront.net/ws/observers");
+  const connection = new WebSocket("wss://dev.realtimemap.jp/ws/observers");
   connection.onopen = function(event) {
     console.log(event);
     document.getElementById("eventType").value = "通信接続イベント受信";
