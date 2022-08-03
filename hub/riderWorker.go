@@ -3,7 +3,6 @@ package hub
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"gps_logger/logger"
 	"gps_logger/model"
 	"time"
@@ -38,6 +37,23 @@ type Response struct {
 	Type  string
 	Url   string
 	Error error
+}
+type NotificationVideos struct {
+	small  string
+	medium string
+	large  string
+}
+type NotificationUser struct {
+	id         string
+	pss_id     string
+	longtitude float64
+	latitude   float64
+	videos     NotificationVideos
+	timestamp  time.Time
+}
+type Notification struct {
+	Type  string
+	Users []NotificationUser
 }
 type Locations []Location
 type Location struct {
@@ -122,7 +138,6 @@ func (r *Rider) ReadPump() {
 				r.ChannelId = channelId
 				endpoint, _ := r.Hub.Media.GetStore(mediaKey)
 				r.Endpoint = endpoint
-				fmt.Println(endpoint)
 			}
 			jsonBytes, err := json.Marshal(&Response{
 				Type:  "START_BROADCAST",
@@ -136,9 +151,28 @@ func (r *Rider) ReadPump() {
 			logger.Info("Sending start broadcast, url: %v", url)
 			r.Send <- jsonBytes
 
-			// for observer := range r.Hub.Observers {
-			// 	observer.Send <-
-			// }
+			videos := NotificationVideos{
+				small:  r.Endpoint + "/LiveA/live_480272p30_h264.m3u8",
+				medium: r.Endpoint + "/LiveA/live_720480p30_h264.m3u8",
+				large:  r.Endpoint + "/LiveA/live_1280x720p60_h264.m3u8",
+			}
+			user := NotificationUser{
+				id:         "user1",
+				pss_id:     "",
+				longtitude: r.Location.Longitude,
+				latitude:   r.Location.Latitude,
+				videos:     videos,
+				timestamp:  time.Now(),
+			}
+			var users []NotificationUser
+			users[0] = user
+			jsonBytes, _ = json.Marshal(&Notification{
+				Type:  "JOIN",
+				Users: append(users, user),
+			})
+			for observer := range r.Hub.Observers {
+				observer.Send <- jsonBytes
+			}
 		case "UPDATE_LOCATION":
 			r.Hub.Broadcast <- Broadcast{
 				Rider:     r,
