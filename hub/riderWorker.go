@@ -3,6 +3,7 @@ package hub
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"gps_logger/logger"
 	"gps_logger/model"
 	"time"
@@ -19,6 +20,7 @@ type Rider struct {
 	UuId      string          `json:"-"`
 	UserId    string          `json:"-"`
 	MediaKey  string          `json:"-"`
+	Endpoint  string          `json:"-"`
 	ChannelId string          `json:"-"`
 	Send      chan []byte     `json:"-"`
 	Hub       *Hub            `json:"-"`
@@ -118,6 +120,9 @@ func (r *Rider) ReadPump() {
 				r.Hub.Media.StartChannel(r.UuId, mediaKey, channelId)
 				r.MediaKey = mediaKey
 				r.ChannelId = channelId
+				endpoint, _ := r.Hub.Media.GetStore(mediaKey)
+				r.Endpoint = endpoint
+				fmt.Println(endpoint)
 			}
 			jsonBytes, err := json.Marshal(&Response{
 				Type:  "START_BROADCAST",
@@ -128,8 +133,12 @@ func (r *Rider) ReadPump() {
 				logger.Error("Failed to marshal broadcasts: %v", err)
 				return
 			}
-			logger.Info("sending start broadcast, url: %v", url)
+			logger.Info("Sending start broadcast, url: %v", url)
 			r.Send <- jsonBytes
+
+			// for observer := range r.Hub.Observers {
+			// 	observer.Send <-
+			// }
 		case "UPDATE_LOCATION":
 			r.Hub.Broadcast <- Broadcast{
 				Rider:     r,

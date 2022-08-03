@@ -17,6 +17,7 @@ type Media struct {
 type MediaRepository interface {
 	CreateChannel() (string, error)
 	GetChannel() (string, string, string, error)
+	GetStore(mediaKey string) (string, error)
 	describeContainer(containerName string) (*mediastore.DescribeContainerOutput, error)
 	describeChannel(channelId string) (*medialive.DescribeChannelOutput, error)
 	StartChannel(userId string, mediaKey string, channelId string) error

@@ -6,7 +6,6 @@ import (
 	"gps_logger/logger"
 	"gps_logger/media"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -22,9 +21,9 @@ type ErrorResponse struct {
 
 func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
-	if os.Getenv("ENV") == "dev" {
-		gin.SetMode(gin.DebugMode)
-	}
+	// if os.Getenv("ENV") == "dev" {
+	// 	gin.SetMode(gin.DebugMode)
+	// }
 
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
