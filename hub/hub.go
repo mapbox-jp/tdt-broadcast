@@ -102,6 +102,7 @@ func (h *Hub) Run() {
 				})
 			}
 			fmt.Println(users)
+			fmt.Println(len(users))
 			jsonBytes, _ := json.Marshal(&Notification{
 				Type:  "JOIN",
 				Users: users,
