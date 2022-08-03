@@ -3,7 +3,6 @@ package hub
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"gps_logger/logger"
 	"gps_logger/model"
 	"time"
@@ -152,26 +151,22 @@ func (r *Rider) ReadPump() {
 			logger.Info("Sending start broadcast, url: %v", url)
 			r.Send <- jsonBytes
 
-			videos := NotificationVideos{
-				small:  r.Endpoint + "/LiveA/live_480272p30_h264.m3u8",
-				medium: r.Endpoint + "/LiveA/live_720480p30_h264.m3u8",
-				large:  r.Endpoint + "/LiveA/live_1280x720p60_h264.m3u8",
-			}
-			user := NotificationUser{
-				id:         "user1",
-				pss_id:     "",
-				longtitude: r.Location.Longitude,
-				latitude:   r.Location.Latitude,
-				videos:     videos,
-				timestamp:  time.Now(),
-			}
-			var users []NotificationUser
-			users = append(users, user)
-			fmt.Println(user)
-			fmt.Println(users)
 			jsonBytes, _ = json.Marshal(&Notification{
-				Type:  "JOIN",
-				Users: users,
+				Type: "JOIN",
+				Users: []NotificationUser{
+					{
+						id:         "user1",
+						pss_id:     "",
+						longtitude: r.Location.Longitude,
+						latitude:   r.Location.Latitude,
+						videos: NotificationVideos{
+							small:  r.Endpoint + "/LiveA/live_480272p30_h264.m3u8",
+							medium: r.Endpoint + "/LiveA/live_720480p30_h264.m3u8",
+							large:  r.Endpoint + "/LiveA/live_1280x720p60_h264.m3u8",
+						},
+						timestamp: time.Now(),
+					},
+				},
 			})
 			for observer := range r.Hub.Observers {
 				observer.Send <- jsonBytes
