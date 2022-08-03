@@ -17,3 +17,4 @@
 2022/08/02 14:31:20 [INFO] Suceeded creating a media input. key: 202208021431
 2022/08/02 14:31:20 [INFO] Started creating a media channel. key: 202208021431, endpoint: %!v(MISSING)
 2022/08/02 14:31:28 [INFO] Suceeded creating a media channel. key: 202208021431, endpoint: rtmp://18.177.6.246:1935/LiveA/A
+2022/08/03 14:23:22 [ERROR] Failed to create redis instance. error: failed to ping redis server: dial tcp 10.0.3.37:6379: i/o timeout

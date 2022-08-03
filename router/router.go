@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"gps_logger/hub"
 	"gps_logger/logger"
 	"gps_logger/media"
@@ -108,7 +109,8 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 		}
 	})
 
-	r.GET("/ws/observes", func(c *gin.Context) {
+	r.GET("/ws/observers", func(c *gin.Context) {
+		fmt.Println(c.Request.Header.Get("Sec-Websocket-Key"))
 		upgrader := websocket.Upgrader{
 			ReadBufferSize:  1024,
 			WriteBufferSize: 1024,
@@ -125,6 +127,7 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 	})
 
 	r.GET("/ws/riders", func(c *gin.Context) {
+		fmt.Println(c.Request.Header.Get("Sec-Websocket-Key"))
 		userId := c.Param("user_id")
 		upgrader := websocket.Upgrader{
 			ReadBufferSize:  1024,
