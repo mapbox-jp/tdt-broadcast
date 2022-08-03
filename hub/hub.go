@@ -72,6 +72,7 @@ func (h *Hub) Run() {
 			rider.Send <- jsonBytes
 			logger.Info("Open connection with new rider. user_id: %v, uuid: %v", rider.UserId, rider.UuId)
 		case rider := <-h.RiderUnregister:
+			fmt.Println(123123123)
 			if _, ok := h.Riders[rider]; ok {
 				h.Broadcasts = append(h.Broadcasts, Broadcast{
 					Rider:     rider,
