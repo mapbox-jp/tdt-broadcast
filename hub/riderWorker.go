@@ -155,16 +155,16 @@ func (r *Rider) ReadPump() {
 				Type: "JOIN",
 				Users: []NotificationUser{
 					{
-						id:         "user1",
-						pss_id:     "",
-						longtitude: r.Location.Longitude,
-						latitude:   r.Location.Latitude,
-						videos: NotificationVideos{
-							small:  r.Endpoint + "/LiveA/live_480272p30_h264.m3u8",
-							medium: r.Endpoint + "/LiveA/live_720480p30_h264.m3u8",
-							large:  r.Endpoint + "/LiveA/live_1280x720p60_h264.m3u8",
+						Id:         "user1",
+						PssId:      "",
+						Longtitude: r.Location.Longitude,
+						Latitude:   r.Location.Latitude,
+						Videos: NotificationVideos{
+							Small:  r.Endpoint + "/LiveA/live_480272p30_h264.m3u8",
+							Medium: r.Endpoint + "/LiveA/live_720480p30_h264.m3u8",
+							Large:  r.Endpoint + "/LiveA/live_1280x720p60_h264.m3u8",
 						},
-						timestamp: time.Now(),
+						Timestamp: time.Now(),
 					},
 				},
 			})
