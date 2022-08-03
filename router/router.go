@@ -3,6 +3,7 @@ package router
 import (
 	"crypto/sha1"
 	"encoding/base64"
+	"fmt"
 	"gps_logger/hub"
 	"gps_logger/logger"
 	"gps_logger/media"
@@ -66,6 +67,7 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 	})
 
 	r.GET("/rider", func(c *gin.Context) {
+		fmt.Println(123)
 		r.LoadHTMLFiles("rider.html")
 		c.HTML(200, "rider.html", nil)
 	})
@@ -118,6 +120,7 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 	})
 
 	r.GET("/ws/observers", func(c *gin.Context) {
+		fmt.Println(c.Request.Header.Get("Sec-Websocket-Key"))
 		upgrader := websocket.Upgrader{
 			ReadBufferSize:  1024,
 			WriteBufferSize: 1024,
@@ -134,6 +137,7 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 	})
 
 	r.GET("/ws/riders", func(c *gin.Context) {
+		fmt.Println(c.Request.Header.Get("Sec-Websocket-Key"))
 		userId := c.Param("user_id")
 		upgrader := websocket.Upgrader{
 			ReadBufferSize:  1024,
