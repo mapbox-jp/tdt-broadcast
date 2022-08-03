@@ -69,7 +69,7 @@ func (h *Hub) Run() {
 				Type: "JOINED",
 			})
 			rider.Send <- jsonBytes
-			logger.Info("Open connection with new rider: %v", rider)
+			logger.Info("Open connection with new rider. user_id: %v, uuid: %v", rider.UserId, rider.UuId)
 		case rider := <-h.RiderUnregister:
 			if _, ok := h.Riders[rider]; ok {
 				h.Broadcasts = append(h.Broadcasts, Broadcast{
@@ -84,7 +84,7 @@ func (h *Hub) Run() {
 			}
 		case observer := <-h.ObserverRegister:
 			h.Observers[observer] = true
-			logger.Info("Open connection with new observer: %v", observer)
+			logger.Info("Open connection with new observer. user_id: %v, uuid: %v", observer.UserId, observer.UuId)
 		case observer := <-h.ObserverUnregister:
 			if _, ok := h.Observers[observer]; ok {
 				delete(h.Observers, observer)

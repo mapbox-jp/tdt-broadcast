@@ -21,10 +21,11 @@ var (
 )
 
 type Observer struct {
-	UuId string
-	Send chan []byte
-	Hub  *Hub
-	Conn *websocket.Conn
+	UuId   string `json:"-"`
+	UserId string `json:"-"`
+	Send   chan []byte
+	Hub    *Hub
+	Conn   *websocket.Conn
 }
 
 func (o *Observer) WritePump() {

@@ -1,8 +1,6 @@
 package router
 
 import (
-	"crypto/sha1"
-	"encoding/base64"
 	"fmt"
 	"gps_logger/hub"
 	"gps_logger/logger"
@@ -20,13 +18,6 @@ import (
 
 type ErrorResponse struct {
 	Error string `json:"error"`
-}
-
-func buildAcceptKey(key string) string {
-	h := sha1.New()
-	h.Write([]byte(key))
-	h.Write([]byte("258EAFA5-E914-47DA-95CA-C5AB0DC85B11"))
-	return base64.StdEncoding.EncodeToString(h.Sum(nil))
 }
 
 func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *gin.Engine {
@@ -120,13 +111,9 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 	})
 
 	r.GET("/ws/observers", func(c *gin.Context) {
-		fmt.Println(c.Request.Header.Get("Sec-Websocket-Key"))
 		upgrader := websocket.Upgrader{
 			ReadBufferSize:  1024,
 			WriteBufferSize: 1024,
-			CheckOrigin: func(r *http.Request) bool {
-				return true
-			},
 		}
 		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {
@@ -137,14 +124,10 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 	})
 
 	r.GET("/ws/riders", func(c *gin.Context) {
-		fmt.Println(c.Request.Header.Get("Sec-Websocket-Key"))
 		userId := c.Param("user_id")
 		upgrader := websocket.Upgrader{
 			ReadBufferSize:  1024,
 			WriteBufferSize: 1024,
-			CheckOrigin: func(r *http.Request) bool {
-				return true
-			},
 		}
 		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {
