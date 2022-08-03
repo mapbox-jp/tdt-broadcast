@@ -3,6 +3,7 @@ package hub
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"gps_logger/logger"
 	"gps_logger/model"
 	"time"
@@ -166,9 +167,10 @@ func (r *Rider) ReadPump() {
 			}
 			var users []*NotificationUser
 			users = append(users, user)
+			fmt.Println(users)
 			jsonBytes, _ = json.Marshal(&Notification{
 				Type:  "JOIN",
-				Users: append(users, user),
+				Users: users,
 			})
 			for observer := range r.Hub.Observers {
 				observer.Send <- jsonBytes

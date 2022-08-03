@@ -99,19 +99,19 @@ func (h *Hub) Run() {
 			h.Rd.HSet("locations", userId, serialized)
 		case <-ticker.C:
 			if len(h.Broadcasts) > 0 {
-				jsonBytes, err := json.Marshal(h.Broadcasts)
-				if err != nil {
-					logger.Error("Failed to marshal broadcasts: %v", err)
-					return
-				}
-				for observer := range h.Observers {
-					select {
-					case observer.Send <- jsonBytes:
-					default:
-						close(observer.Send)
-						// delete(h.clients, client)
-					}
-				}
+				// jsonBytes, err := json.Marshal(h.Broadcasts)
+				// if err != nil {
+				// 	logger.Error("Failed to marshal broadcasts: %v", err)
+				// 	return
+				// }
+				// for observer := range h.Observers {
+				// 	select {
+				// 	case observer.Send <- jsonBytes:
+				// 	default:
+				// 		close(observer.Send)
+				// 		// delete(h.clients, client)
+				// 	}
+				// }
 				h.Broadcasts = []Broadcast{}
 			}
 		}
