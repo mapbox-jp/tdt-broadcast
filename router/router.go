@@ -1,6 +1,8 @@
 package router
 
 import (
+	"crypto/sha1"
+	"encoding/base64"
 	"fmt"
 	"gps_logger/hub"
 	"gps_logger/logger"
@@ -18,6 +20,13 @@ import (
 
 type ErrorResponse struct {
 	Error string `json:"error"`
+}
+
+func buildAcceptKey(key string) string {
+	h := sha1.New()
+	h.Write([]byte(key))
+	h.Write([]byte("258EAFA5-E914-47DA-95CA-C5AB0DC85B11"))
+	return base64.StdEncoding.EncodeToString(h.Sum(nil))
 }
 
 func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *gin.Engine {
@@ -127,7 +136,6 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 	})
 
 	r.GET("/ws/riders", func(c *gin.Context) {
-		fmt.Println(c.Request.Header.Get("Sec-Websocket-Key"))
 		userId := c.Param("user_id")
 		upgrader := websocket.Upgrader{
 			ReadBufferSize:  1024,
@@ -136,6 +144,23 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 				return true
 			},
 		}
+
+		hijacker := c.Writer.(http.Hijacker)
+		_, readWriter, err := hijacker.Hijack()
+		if err != nil {
+			logger.Error("Failed to get connection: %v", err)
+			return
+		}
+		key := c.Request.Header.Get("Sec-Websocket-Key")
+		acceptKey := buildAcceptKey(key)
+
+		readWriter.WriteString("HTTP/1.1 101 Switching Protocols\r\n")
+		readWriter.WriteString("Upgrade: websocket\r\n")
+		readWriter.WriteString("Connection: Upgrade\r\n")
+		readWriter.WriteString("Sec-WebSocket-Accept: " + acceptKey + "\r\n")
+		readWriter.WriteString("\r\n")
+		readWriter.Flush()
+
 		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {
 			logger.Error("Failed to get connection: %v", err)
