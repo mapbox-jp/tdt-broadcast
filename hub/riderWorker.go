@@ -54,7 +54,7 @@ type NotificationUser struct {
 }
 type Notification struct {
 	Type  string
-	Users []*NotificationUser
+	Users []NotificationUser
 }
 type Locations []Location
 type Location struct {
@@ -157,7 +157,7 @@ func (r *Rider) ReadPump() {
 				medium: r.Endpoint + "/LiveA/live_720480p30_h264.m3u8",
 				large:  r.Endpoint + "/LiveA/live_1280x720p60_h264.m3u8",
 			}
-			user := &NotificationUser{
+			user := NotificationUser{
 				id:         "user1",
 				pss_id:     "",
 				longtitude: r.Location.Longitude,
@@ -165,7 +165,7 @@ func (r *Rider) ReadPump() {
 				videos:     videos,
 				timestamp:  time.Now(),
 			}
-			var users []*NotificationUser
+			var users []NotificationUser
 			users = append(users, user)
 			fmt.Println(users)
 			jsonBytes, _ = json.Marshal(&Notification{
