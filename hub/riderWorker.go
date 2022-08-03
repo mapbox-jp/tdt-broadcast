@@ -39,21 +39,21 @@ type Response struct {
 	Error error
 }
 type NotificationVideos struct {
-	small  string
-	medium string
-	large  string
+	Small  string `json:"small"`
+	Medium string `json:"medium"`
+	Large  string `json:"large"`
 }
 type NotificationUser struct {
-	id         string
-	pss_id     string
-	longtitude float64
-	latitude   float64
-	videos     NotificationVideos
-	timestamp  time.Time
+	Id         string             `json:"id"`
+	PssId      string             `json:"pss_id"`
+	Longtitude float64            `json:"longtitude"`
+	Latitude   float64            `json:"latitude"`
+	Videos     NotificationVideos `json:"videos"`
+	Timestamp  time.Time          `json:"timestamp"`
 }
 type Notification struct {
-	Type  string
-	Users []NotificationUser
+	Type  string             `json:"type"`
+	Users []NotificationUser `json:"users"`
 }
 type Locations []Location
 type Location struct {
