@@ -18,6 +18,7 @@ var (
 type Rider struct {
 	UuId      string          `json:"-"`
 	UserId    string          `json:"-"`
+	Status    string          `json:"-"`
 	MediaKey  string          `json:"-"`
 	Endpoint  string          `json:"-"`
 	ChannelId string          `json:"-"`
@@ -129,6 +130,7 @@ func (r *Rider) ReadPump() {
 
 		switch req.Type {
 		case "START_BROADCAST":
+			r.Status = "GETTING_CHANNEL"
 			mediaKey, channelId, url, err := r.Hub.Media.GetChannel()
 			if err != nil {
 				logger.Error("Failed to set channels on redis. err: %v", err)
@@ -150,6 +152,7 @@ func (r *Rider) ReadPump() {
 			}
 			logger.Info("Sending start broadcast, url: %v", url)
 			r.Send <- jsonBytes
+			r.Status = "BROADCASTING"
 
 			jsonBytes, _ = json.Marshal(&Notification{
 				Type: "JOIN",
@@ -178,7 +181,6 @@ func (r *Rider) ReadPump() {
 				Locations: req.Locations,
 				Timestamp: time.Now(),
 			}
-		case "END":
 		}
 	}
 }
@@ -187,6 +189,7 @@ func RiderWorker(userId string, hub *Hub, conn *websocket.Conn, c *gin.Context) 
 	rider := &Rider{
 		UuId:   c.ClientIP(),
 		UserId: userId,
+		Status: "JOINED",
 		Send:   make(chan []byte),
 		Hub:    hub,
 		Conn:   conn,

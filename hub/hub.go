@@ -79,6 +79,7 @@ func (h *Hub) Run() {
 					Timestamp: time.Now(),
 				})
 				rider.Hub.Media.StopChannel(rider.MediaKey, rider.ChannelId)
+				fmt.Println(123123123)
 				delete(h.Riders, rider)
 				close(rider.Send)
 				logger.Info("Closed connection with rider: %v", rider)
@@ -101,10 +102,8 @@ func (h *Hub) Run() {
 					Timestamp: time.Now(),
 				})
 			}
-			fmt.Println(users)
-			fmt.Println(len(users))
 			jsonBytes, _ := json.Marshal(&Notification{
-				Type:  "JOIN",
+				Type:  "INIT",
 				Users: users,
 			})
 			observer.Send <- jsonBytes
