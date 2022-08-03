@@ -165,7 +165,7 @@ func (r *Rider) ReadPump() {
 				timestamp:  time.Now(),
 			}
 			var users []NotificationUser
-			users[0] = user
+			users = append(users, user)
 			jsonBytes, _ = json.Marshal(&Notification{
 				Type:  "JOIN",
 				Users: append(users, user),

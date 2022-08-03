@@ -1,7 +1,6 @@
 package hub
 
 import (
-	"fmt"
 	"gps_logger/logger"
 	"time"
 
@@ -38,7 +37,6 @@ func (o *Observer) WritePump() {
 	for {
 		select {
 		case message, ok := <-o.Send:
-			fmt.Println("write")
 			o.Conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				o.Conn.WriteMessage(websocket.CloseMessage, []byte{})
