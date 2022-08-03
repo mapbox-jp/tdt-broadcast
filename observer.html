@@ -22,8 +22,8 @@
     document.getElementById("dispMsg").value = error.data;
   };
   connection.onmessage = function(event) {
-    console.log(event);
-    console.log(JSON.parse(event.data));
+    const data = JSON.parse(event.data);
+    console.log(data);
     document.getElementById("eventType").value = "メッセージ受信";
     document.getElementById("dispMsg").value = event.data;
   };

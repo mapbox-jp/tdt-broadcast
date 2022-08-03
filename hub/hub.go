@@ -2,6 +2,7 @@ package hub
 
 import (
 	"encoding/json"
+	"fmt"
 	"gps_logger/logger"
 	"gps_logger/media"
 	"time"
@@ -84,6 +85,28 @@ func (h *Hub) Run() {
 			}
 		case observer := <-h.ObserverRegister:
 			h.Observers[observer] = true
+
+			var users []NotificationUser
+			for rider := range h.Riders {
+				users = append(users, NotificationUser{
+					Id:         "user1",
+					PssId:      "",
+					Longtitude: rider.Location.Longitude,
+					Latitude:   rider.Location.Latitude,
+					Videos: NotificationVideos{
+						Small:  rider.Endpoint + "/LiveA/live_480272p30_h264.m3u8",
+						Medium: rider.Endpoint + "/LiveA/live_720480p30_h264.m3u8",
+						Large:  rider.Endpoint + "/LiveA/live_1280x720p60_h264.m3u8",
+					},
+					Timestamp: time.Now(),
+				})
+			}
+			fmt.Println(users)
+			jsonBytes, _ := json.Marshal(&Notification{
+				Type:  "JOIN",
+				Users: users,
+			})
+			observer.Send <- jsonBytes
 			logger.Info("Open connection with new observer. user_id: %v, uuid: %v", observer.UserId, observer.UuId)
 		case observer := <-h.ObserverUnregister:
 			if _, ok := h.Observers[observer]; ok {
