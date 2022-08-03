@@ -108,10 +108,13 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 		}
 	})
 
-	r.GET("/ws/observe/riders", func(c *gin.Context) {
+	r.GET("/ws/observes", func(c *gin.Context) {
 		upgrader := websocket.Upgrader{
 			ReadBufferSize:  1024,
 			WriteBufferSize: 1024,
+			CheckOrigin: func(r *http.Request) bool {
+				return true
+			},
 		}
 		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {
@@ -126,6 +129,9 @@ func New(sess *session.Session, rd *redis.Client, media media.MediaRepository) *
 		upgrader := websocket.Upgrader{
 			ReadBufferSize:  1024,
 			WriteBufferSize: 1024,
+			CheckOrigin: func(r *http.Request) bool {
+				return true
+			},
 		}
 		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {

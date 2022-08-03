@@ -3,7 +3,6 @@ package hub
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"gps_logger/logger"
 	"gps_logger/model"
 	"time"
@@ -118,8 +117,7 @@ func (r *Rider) ReadPump() {
 			if err != nil {
 				logger.Error("Failed to set channels on redis. err: %v", err)
 			} else {
-				err = r.Hub.Media.StartChannel(r.UuId, mediaKey, channelId)
-				fmt.Println(err)
+				r.Hub.Media.StartChannel(r.UuId, mediaKey, channelId)
 				r.MediaKey = mediaKey
 				r.ChannelId = channelId
 			}
